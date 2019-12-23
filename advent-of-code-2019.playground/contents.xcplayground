@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='6.0' target-platform='macos' display-mode='raw'>
+    <pages>
+        <page name='2019-12-01a'/>
+        <page name='2019-12-01b'/>
+        <page name='2019-12-02a'/>
+        <page name='2019-12-02b'/>
+        <page name='2019-12-03a'/>
+        <page name='2019-12-03b'/>
+        <page name='2019-12-04a'/>
+        <page name='2019-12-04b'/>
+    </pages>
+</playground>
