@@ -19,12 +19,18 @@ struct OpCode: CustomStringConvertible {
         /// Read from location and output it.
         case output = 4
 
+        /// If the first argument != 0, set the program pointer to the 2nd argument.
         case jumpIfTrue = 5
 
+        /// If the first argument == 0, set the program pointer to the 2nd argument.
         case jumpIfFalse = 6
 
+        /// If the first argument is less than the second argument, store a 1 at the location of the third argument.
+        /// If not, store a 0 at the location of the third argument.
         case lessThan = 7
 
+        /// If the first argument is equal to the second argument, store a 1 at the location of the 3rd argument.
+        /// If not, store a 0 at the location of the third argument.
         case equals = 8
 
         /// Stop the program.
@@ -45,10 +51,10 @@ struct OpCode: CustomStringConvertible {
             case .multiply: return "MUL"
             case .input: return "INP"
             case .output: return "OUT"
-            case .jumpIfFalse = "JPF"
-            case .jumpIfTrue = "JPT"
-            case .lessThan = "LES"
-            case .equals = "EQL"
+            case .jumpIfFalse: return "JPF"
+            case .jumpIfTrue: return "JPT"
+            case .lessThan: return "LES"
+            case .equals: return "EQL"
             case .halt: return "END"
             }
         }
@@ -92,8 +98,8 @@ struct OpCode: CustomStringConvertible {
     ///
     var length: Int {
         switch operation {
-            case .add, .multiply, .jumpIfFalse, .jumpIfTrue: return 4
-            case .lessThan, .equals: return 3
+            case .add, .multiply, .lessThan, .equals: return 4
+            case .jumpIfTrue, .jumpIfFalse: return 3
             case .input, .output: return 2
             case .halt: return 1
         }
@@ -142,6 +148,7 @@ struct OpCode: CustomStringConvertible {
 
             // Attempt to create an Operation from the digits.
             guard let operation = Operation(rawValue: rawOperation) else {
+                print("data: \(data)")
                 fatalError("Unknown operation encountered: \(rawOperation)")
             }
 

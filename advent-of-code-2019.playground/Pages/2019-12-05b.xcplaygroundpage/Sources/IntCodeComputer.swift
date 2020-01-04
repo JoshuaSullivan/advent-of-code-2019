@@ -12,7 +12,7 @@ class IntCodeComputer {
     var programIndex: Int = 0
 
     init(program: [Int], diagnosticId: Int) {
-        self.program = program
+        self.program = program + [0, 0, 0, 0]
         self.inputs = [diagnosticId]
     }
 
@@ -22,36 +22,67 @@ class IntCodeComputer {
         repeat {
             let opCode = nextOpCode()
             print("opCode: \(opCode)")
+            
             switch opCode.operation {
+
             case .add:
                 let a = value(for: opCode.parameters[0], with: program)
                 let b = value(for: opCode.parameters[1], with: program)
                 let target = opCode.parameters[2].immediateValue
                 program[target] = a + b
+                print("\(target) : \(program[target])")
+
             case .multiply:
                 let a = value(for: opCode.parameters[0], with: program)
                 let b = value(for: opCode.parameters[1], with: program)
                 let target = opCode.parameters[2].immediateValue
                 program[target] = a * b
+                print("\(target) : \(program[target])")
+
             case .input:
                 guard let input = inputs.first else {
                     fatalError("No input available for an input OpCode.")
                 }
                 let target = opCode.parameters[0].immediateValue
                 program[target] = input
+
             case .output:
-                let target = opCode.parameters[0].immediateValue
-                outputs.append(program[target])
-            case .jumpIfFalse:
-                print(opCode)
+                let outValue = value(for: opCode.parameters[0], with: program)
+                outputs.append(outValue)
+
             case .jumpIfTrue:
-                print(opCode)
+                let a = value(for: opCode.parameters[0], with: program)
+                let target = opCode.parameters[1].immediateValue
+                if a != 0 {
+                    programIndex = target
+                    continue
+                }
+
+            case .jumpIfFalse:
+                let a = value(for: opCode.parameters[0], with: program)
+                let target = opCode.parameters[1].immediateValue
+                if a == 0 {
+                    programIndex = target
+                    continue
+                }
+
             case .lessThan:
-                print(opCode)
+                let a = value(for: opCode.parameters[0], with: program)
+                let b = value(for: opCode.parameters[1], with: program)
+                let target = opCode.parameters[2].immediateValue
+                program[target] = a < b ? 1 : 0
+                print("\(target) : \(program[target])")
+
             case .equals:
-                print(opCode)
+                let a = value(for: opCode.parameters[0], with: program)
+                let b = value(for: opCode.parameters[1], with: program)
+                let target = opCode.parameters[2].immediateValue
+                program[target] = a == b ? 1 : 0
+                print("\(target) : \(program[target])")
+
             case .halt:
                 isHalted = true
+
             }
             programIndex += opCode.length
         } while !isHalted
@@ -59,10 +90,12 @@ class IntCodeComputer {
     }
 
     private func nextOpCode() -> OpCode {
+        print("")
+        print("programIndex: \(programIndex)")
         let range = programIndex..<(programIndex + 4)
 //        print("range: \(range)")
         let values = Array(program[range])
-//        print("values: \(values)")
+        print("values: \(values)")
         return OpCode(with: values)
     }
 
